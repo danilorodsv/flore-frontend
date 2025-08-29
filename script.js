@@ -1,247 +1,3 @@
-// Florê - Premium Digital Catalog JavaScript (Versão Completa e Final)
-class FloralCatalogApp {
-    constructor() {
-        this.products = [];
-        this.categories = [];
-        this.cart = JSON.parse(localStorage.getItem('flore_cart')) || [];
-        this.favorites = JSON.parse(localStorage.getItem('flore_favorites')) || [];
-        this.currentFilter = 'all';
-        this.currentSort = 'name';
-        this.currentView = 'grid';
-        this.searchQuery = '';
-        this.currentPage = 1;
-        this.productsPerPage = 12;
-        this.isLoading = false;
-        this.settings = {};
-        
-        this.init();
-    }
-
-    async init() {
-        try {
-            const timeoutPromise = new Promise((_, reject) =>
-                setTimeout(() => reject(new Error("O servidor demorou muito para responder (timeout).")), 30000)
-            );
-            
-            await Promise.race([
-                Promise.all([this.loadSettings(), this.loadCategories(), this.loadProducts()]),
-                timeoutPromise
-            ]);
-            
-            this.setupEventListeners();
-            this.trackPageView();
-        } catch (error) {
-            console.error('Initialization error:', error);
-            this.showToast('Erro ao carregar dados do servidor. Mostrando exemplos.', 'error');
-            this.loadSampleDataAsFallback();
-            this.setupEventListeners();
-        } finally {
-            this.hideLoadingScreen();
-        }
-    }
-
-    getApiUrl() {
-        if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
-            return 'http://localhost:5000';
-        } else {
-            return 'https://flore-backend.onrender.com';
-        }
-    }
-
-    async loadProducts() {
-        const response = await fetch(`${this.getApiUrl()}/api/products`);
-        if (!response.ok) throw new Error('Falha ao buscar produtos.');
-        this.products = await response.json();
-        this.renderProducts();
-    }
-
-    async loadCategories() {
-        const response = await fetch(`${this.getApiUrl()}/api/categories`);
-        if (!response.ok) throw new Error('Falha ao buscar categorias.');
-        this.categories = await response.json();
-    }
-
-    async loadSettings() {
-        const response = await fetch(`${this.getApiUrl()}/api/settings`);
-        if (!response.ok) throw new Error('Falha ao buscar configurações.');
-        this.settings = await response.json();
-        this.applySettings();
-    }
-    
-    applySettings() {
-        document.title = `${this.settings.siteName} - Catálogo Digital Premium`;
-        const heroTitle = document.getElementById('hero-title');
-        if (heroTitle) heroTitle.textContent = this.settings.heroTitle;
-        // ... (e assim por diante para todos os outros settings)
-    }
-
-    loadSampleDataAsFallback() {
-        this.products = this.getSampleProducts();
-        this.categories = this.getSampleCategories();
-        this.renderProducts();
-        this.renderCategories();
-    }
-    
-    setupEventListeners() {
-        // Eventos do Header, busca, modais, etc.
-        const cartButton = document.getElementById('cart-button');
-        if (cartButton) cartButton.addEventListener('click', () => this.openCartModal());
-        
-        const checkoutForm = document.getElementById('checkout-form');
-        if (checkoutForm) {
-            checkoutForm.addEventListener('submit', (e) => {
-                e.preventDefault();
-                this.processCheckout();
-            });
-        }
-        
-        const checkoutBtn = document.getElementById('checkout-btn');
-        if (checkoutBtn) checkoutBtn.addEventListener('click', () => this.openCheckoutModal());
-
-        document.querySelectorAll('.filter-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => this.setFilter(e.target.dataset.filter));
-        });
-
-        // Adiciona listeners aos produtos renderizados
-        this.addProductEventListeners();
-    }
-
-    renderProducts() {
-        const grid = document.getElementById('products-grid');
-        if (!grid) return;
-        // Lógica de filtragem e ordenação...
-        grid.innerHTML = this.products.map(p => this.createProductCard(p)).join('');
-        this.addProductEventListeners(); // Re-adiciona os eventos após renderizar
-    }
-
-    createProductCard(product) {
-        const isFavorite = this.favorites.includes(product.id);
-        return `
-            <div class="product-card glass-effect rounded-2xl overflow-hidden border border-primary/20 hover-glow transition-all duration-300">
-                <div class="relative">
-                    <img src="${product.imageUrl || 'https://placehold.co/400x300/1a1a1a/C4A484?text=Flor'}" alt="${product.name}" class="w-full h-48 object-cover">
-                </div>
-                <div class="p-6">
-                    <h3 class="text-lg font-semibold text-primary mb-2">${product.name}</h3>
-                    <p class="text-text-secondary text-sm line-clamp-2 h-10">${product.description}</p>
-                    <div class="flex items-center justify-between my-4">
-                        <span class="text-2xl font-bold gradient-text">R$ ${product.price.toFixed(2)}</span>
-                    </div>
-                    <div class="flex space-x-3">
-                        <button class="view-product-btn flex-1 btn-primary py-3 rounded-xl font-medium" data-product-id="${product.id}">Ver Detalhes</button>
-                        <button class="add-to-cart-btn p-3 glass-effect border border-primary/30 text-primary hover:bg-primary hover:text-black rounded-xl" data-product-id="${product.id}">
-                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
-                        </button>
-                    </div>
-                </div>
-            </div>`;
-    }
-    
-    addProductEventListeners() {
-        document.querySelectorAll('.view-product-btn').forEach(btn => {
-            btn.addEventListener('click', e => this.openProductModal(e.currentTarget.dataset.productId));
-        });
-        document.querySelectorAll('.add-to-cart-btn').forEach(btn => {
-            btn.addEventListener('click', e => {
-                e.stopPropagation();
-                this.addToCart(e.currentTarget.dataset.productId);
-            });
-        });
-    }
-
-    addToCart(productId) {
-        const product = this.products.find(p => p.id === productId);
-        if (!product) return;
-        const existingItem = this.cart.find(item => item.id === productId);
-        if (existingItem) {
-            existingItem.quantity++;
-        } else {
-            this.cart.push({ id: product.id, name: product.name, price: product.price, imageUrl: product.imageUrl, quantity: 1 });
-        }
-        this.saveCart();
-        this.updateCartCount();
-        this.showToast(`${product.name} adicionado ao carrinho!`, 'success');
-    }
-    
-    openCartModal() {
-        this.renderCartItems();
-        document.getElementById('cart-modal')?.classList.remove('hidden');
-    }
-
-    renderCartItems() {
-        const container = document.getElementById('cart-items');
-        const totalEl = document.getElementById('cart-total');
-        if (!container || !totalEl) return;
-        
-        if (this.cart.length === 0) {
-            container.innerHTML = `<p class="text-text-secondary text-center">Seu carrinho está vazio.</p>`;
-            totalEl.textContent = 'R$ 0,00';
-            return;
-        }
-
-        container.innerHTML = this.cart.map(item => `
-            <div class="flex justify-between items-center">
-                <span>${item.quantity}x ${item.name}</span>
-                <span>R$ ${(item.price * item.quantity).toFixed(2)}</span>
-            </div>
-        `).join('');
-        totalEl.textContent = `R$ ${this.getCartTotal().toFixed(2)}`;
-    }
-
-    openCheckoutModal() {
-        if (this.cart.length === 0) {
-            this.showToast('Seu carrinho está vazio.', 'error');
-            return;
-        }
-        document.getElementById('cart-modal')?.classList.add('hidden');
-        document.getElementById('checkout-modal')?.classList.remove('hidden');
-        document.getElementById('checkout-total').textContent = `R$ ${this.getCartTotal().toFixed(2)}`;
-    }
-
-    async processCheckout() {
-        const form = document.getElementById('checkout-form');
-        const formData = new FormData(form);
-        const orderData = {
-            customer_name: formData.get('customer_name'),
-            customer_phone: formData.get('customer_phone'),
-            notes: formData.get('notes'),
-            items: this.cart,
-            total: this.getCartTotal()
-        };
-
-        if (!orderData.customer_name || !orderData.customer_phone) {
-            this.showToast('Nome e WhatsApp são obrigatórios.', 'error');
-            return;
-        }
-
-        try {
-            const response = await fetch(`${this.getApiUrl()}/api/whatsapp/send-order`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(orderData)
-            });
-            if (!response.ok) throw new Error('Falha ao gerar link do WhatsApp.');
-            
-            const result = await response.json();
-            window.open(result.whatsapp_url, '_blank');
-            
-            this.cart = [];
-            this.saveCart();
-            this.updateCartCount();
-            this.closeAllModals();
-            this.showToast('Pedido enviado! Continue no WhatsApp.', 'success');
-        } catch (error) {
-            this.showToast(error.message, 'error');
-        }
-    }
-    
-    // Inclua aqui o restante de todas as funções do seu script_full.js original
-    // (getSampleProducts, getSampleCategories, etc.)
-    // As funções mais importantes já foram incluídas acima.
-}
-// Initialize the application
-const app = new FloralCatalogApp();
-window.app = app;
 // Florê - Premium Digital Catalog JavaScript
 // Enhanced WhatsApp Integration with Detailed Order Summary
 
@@ -827,6 +583,48 @@ class FloralCatalogApp {
                 favoritesCount.classList.add('hidden');
             }
         }
+    }
+
+    openFavoritesModal() {
+        this.renderFavoritesItems();
+        document.getElementById('favorites-modal').classList.remove('hidden');
+    }
+
+    renderFavoritesItems() {
+        const container = document.getElementById('favorites-items');
+        if (!container) return;
+
+        if (this.favorites.length === 0) {
+            container.innerHTML = '<p class="text-text-secondary text-center py-8">Você ainda não favoritou nenhum produto.</p>';
+            return;
+        }
+
+        container.innerHTML = '';
+        const favoriteProducts = this.products.filter(p => this.favorites.includes(p.id));
+
+        favoriteProducts.forEach(item => {
+            const favItem = document.createElement('div');
+            favItem.className = 'flex items-center space-x-4 p-4 glass-effect rounded-lg';
+            favItem.innerHTML = `
+                <img src="${item.imageUrl || 'https://placehold.co/80x80/1a1a1a/C4A484?text=' + encodeURIComponent(item.name)}" 
+                     alt="${item.name}" class="w-16 h-16 object-cover rounded-lg">
+                <div class="flex-1">
+                    <h4 class="font-semibold text-primary">${item.name}</h4>
+                    <p class="text-text-secondary">R$ ${item.price.toFixed(2)}</p>
+                </div>
+                <div class="flex items-center space-x-2">
+                    <button class="p-2 glass-effect border border-primary/30 text-primary hover:bg-primary hover:text-black rounded" 
+                            onclick="app.addToCart('${item.id}'); app.closeAllModals(); app.openCartModal();">
+                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"/></svg>
+                    </button>
+                    <button class="text-red-400 hover:text-red-300 transition-colors" 
+                            onclick="app.toggleFavorite('${item.id}'); app.renderFavoritesItems();">
+                        <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><path d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/></svg>
+                    </button>
+                </div>
+            `;
+            container.appendChild(favItem);
+        });
     }
 
     // Modal functionality
