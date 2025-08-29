@@ -55,18 +55,12 @@
         <div class="loading-spinner"></div>
     </div>
 
-    <header class="fixed top-0 w-full z-40 transition-all duration-300" id="main-header">
+    <header class="sticky top-0 w-full z-40 transition-all duration-300 navbar-blur" id="main-header">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#home" class="flex items-center space-x-4">
+            <a href="#" class="flex items-center space-x-4">
                 <img id="header-logo" src="https://storage.googleapis.com/gemini-prod-us-west1-d50e9603655a/uploaded/logo%20quadrada.png" alt="Florê Logo" class="h-10 w-10 rounded-full">
                 <span class="text-2xl font-bold font-display gradient-text">Florê</span>
             </a>
-            <nav class="hidden md:flex items-center space-x-8">
-                <a href="#home" class="text-text-secondary hover:text-primary transition-colors">Início</a>
-                <a href="#catalog" class="text-text-secondary hover:text-primary transition-colors">Catálogo</a>
-                <a href="#about" class="text-text-secondary hover:text-primary transition-colors">Sobre</a>
-                <a href="#contact" class="text-text-secondary hover:text-primary transition-colors">Contato</a>
-            </nav>
             <div class="flex items-center space-x-2">
                 <button id="search-button" class="p-2 text-primary hover:text-secondary transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
@@ -79,9 +73,6 @@
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
                     <span id="cart-count" class="absolute -top-1 -right-1 bg-accent text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
                 </button>
-                <button id="mobile-menu-button" class="md:hidden p-2 text-primary">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
-                </button>
             </div>
         </div>
         <div id="search-bar" class="hidden container mx-auto px-6 pb-4 animate-fade-in">
@@ -91,26 +82,15 @@
                 <button id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-primary">&times;</button>
             </div>
         </div>
-        <div id="mobile-menu" class="hidden md:hidden bg-surface/90 backdrop-blur-lg">
-            <a href="#home" class="block py-3 px-6 text-text-secondary hover:text-primary">Início</a>
-            <a href="#catalog" class="block py-3 px-6 text-text-secondary hover:text-primary">Catálogo</a>
-            <a href="#about" class="block py-3 px-6 text-text-secondary hover:text-primary">Sobre</a>
-            <a href="#contact" class="block py-3 px-6 text-text-secondary hover:text-primary">Contato</a>
-        </div>
     </header>
 
-    <main class="relative z-10 pt-24">
-        <section id="home" class="text-center py-20 px-6 animate-fade-in">
-            <h1 id="hero-title" class="text-4xl md:text-6xl font-display font-bold gradient-text">Flores que encantam, momentos que marcam.</h1>
-            <p id="hero-subtitle" class="text-lg text-text-secondary mt-4 max-w-2xl mx-auto">Arranjos feitos à mão com as flores mais frescas para celebrar a vida.</p>
-        </section>
-
+    <main class="relative z-10">
         <section id="catalog" class="py-12">
             <div class="container mx-auto px-6">
-                <h2 class="text-3xl font-display font-bold gradient-text mb-8 text-center animate-slide-up">Nosso Catálogo</h2>
+                <h1 class="text-3xl font-display font-bold gradient-text mb-8 text-center animate-slide-up">Nosso Catálogo</h1>
                 
                 <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 animate-slide-up">
-                    <div class="flex-wrap justify-center gap-2 hidden md:flex">
+                    <div class="flex-wrap justify-center gap-2 flex overflow-x-auto pb-2">
                         <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium border transition-colors active border-primary text-primary" data-filter="all">Todos</button>
                         <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium border transition-colors border-primary/30 text-text-secondary" data-filter="buques">Buquês</button>
                         <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium border transition-colors border-primary/30 text-text-secondary" data-filter="arranjos">Arranjos</button>
@@ -124,53 +104,15 @@
                             <option value="price-high">Maior Preço</option>
                             <option value="views">Mais Vistos</option>
                         </select>
-                        <div class="flex items-center glass-effect border border-primary/30 rounded-lg p-1">
-                            <button id="grid-view" class="view-btn p-2 rounded-md active bg-primary text-black"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2V6zM14 6a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2V6zM4 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2H6a2 2 0 01-2-2v-2zM14 16a2 2 0 012-2h2a2 2 0 012 2v2a2 2 0 01-2 2h-2a2 2 0 01-2-2v-2z"></path></svg></button>
-                            <button id="list-view" class="view-btn p-2 rounded-md"><svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 10h16M4 14h16M4 18h16"></path></svg></button>
-                        </div>
                     </div>
                 </div>
 
                 <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                    <!-- Products are loaded by JS -->
                 </div>
                 <div class="text-center mt-12">
                     <button id="load-more" class="btn-primary px-8 py-3 font-bold rounded-2xl text-base hidden">Carregar Mais</button>
                 </div>
-            </div>
-        </section>
-
-        <section id="about" class="py-20 bg-surface">
-            <div class="container mx-auto px-6 grid md:grid-cols-2 gap-12 items-center">
-                <div class="animate-slide-up">
-                    <h2 id="about-title" class="text-3xl font-display font-bold gradient-text mb-4">Nossa História</h2>
-                    <div id="about-text" class="text-text-secondary space-y-4">
-                        <p>A Florê Floricultura nasceu de um sonho de mãe e filha, unidas pela paixão por flores e pelo desejo de levar mais cor e alegria para a vida das pessoas em São Luís de Montes Belos, Goiás.</p>
-                    </div>
-                </div>
-                <div class="animate-slide-up">
-                    <img id="about-image" src="https://placehold.co/600x400/1a1a1a/C4A484?text=Nossa+Loja" alt="Nossa Loja" class="rounded-2xl shadow-2xl w-full">
-                </div>
-            </div>
-        </section>
-
-        <section id="contact" class="py-20">
-            <div class="container mx-auto px-6 text-center">
-                <h2 class="text-3xl font-display font-bold gradient-text mb-8">Entre em Contato</h2>
-                <div class="max-w-4xl mx-auto grid md:grid-cols-3 gap-8 text-center">
-                    <div class="glass-effect p-6 rounded-2xl">
-                        <h3 class="font-bold text-primary mb-2">Endereço</h3>
-                        <p id="contact-address" class="text-sm">Av. Hermógenes Coelho, 812 - Centro<br>São Luís de Montes Belos - GO</p>
-                    </div>
-                    <div class="glass-effect p-6 rounded-2xl">
-                        <h3 class="font-bold text-primary mb-2">WhatsApp</h3>
-                        <p id="contact-whatsapp" class="text-sm">+55 (64) 3671-4040</p>
-                    </div>
-                    <div class="glass-effect p-6 rounded-2xl">
-                        <h3 class="font-bold text-primary mb-2">Horários</h3>
-                        <p id="contact-hours" class="text-sm">Seg - Sex: 08:00 às 18:00<br>Sáb: 08:00 às 12:00</p>
-                    </div>
-                </div>
-                <button id="whatsapp-direct" class="btn-primary px-8 py-4 font-bold rounded-2xl text-lg mt-12">Conversar no WhatsApp</button>
             </div>
         </section>
     </main>
@@ -179,10 +121,17 @@
         <div class="container mx-auto px-6 text-center text-text-secondary text-sm">
             <img src="https://storage.googleapis.com/gemini-prod-us-west1-d50e9603655a/uploaded/logo%20quadrada.png" alt="Florê Logo" class="h-12 w-12 mx-auto mb-4 rounded-full">
             <p>© 2025 Florê Floricultura. Todos os direitos reservados.</p>
+            <p id="contact-address" class="text-xs mt-2"></p>
             <a class='text-xs text-primary hover:text-accent' href='/admin.html'>Área Administrativa</a>
         </div>
     </footer>
 
+    <!-- Floating Action Button for WhatsApp -->
+    <button id="whatsapp-direct" class="fixed bottom-6 right-6 bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 transition-transform hover:scale-110 z-30">
+        <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.487 5.235 3.487 8.413 0 6.557-5.338 11.892-11.894 11.892-1.99 0-3.903-.52-5.586-1.457l-6.354 1.654zm6.838-9.972c.043-.117.105-.13.147-.13.042 0 .12.003.18.003.06 0 .135.003.203.003.068 0 .15.02.213.045.062.024.135.09.198.158.063.068.12.15.168.232.048.083.087.175.118.258.03.083.045.16.06.223.015.062.015.135.015.198s-.015.135-.03.198c-.015.063-.045.135-.09.223-.045.087-.105.175-.18.258-.075.083-.165.16-.27.232-.105.075-.225.12-.36.15-.135.03-.285.045-.45.045-.165 0-.345-.015-.54-.045-.195-.03-.39-.075-.57-.135-.18-.06-.345-.12-.51-.21-.165-.09-.315-.18-.45-.3-.135-.12-.255-.255-.36-.405-.105-.15-.195-.315-.27-.495-.075-.18-.135-.375-.18-.585-.045-.21-.075-.435-.075-.675s.03-.465.09-.69c.06-.225.135-.435.225-.63.09-.195.21-.375.345-.54.135-.165.285-.315.45-.45.165-.135.345-.255.54-.36.195-.105.405-.195.63-.27.225-.075.465-.12.72-.15.255-.03.51-.045.78-.045.27 0 .525.015.765.045.24.03.465.075.675.135.21.06.405.135.585.225.18.09.345.195.495.3.15.105.285.225.405.36.12.135.225.27.315.42.09.15.165.3.225.465.06.165.105.33.135.51.03.18.045.36.045.54s-.015.345-.045.51c-.03.165-.075.33-.135.495-.06.165-.12.315-.195.45-.075.135-.15.255-.24.36-.09.105-.18.195-.285.27-.105.075-.21.135-.33.18-.12.045-.24.075-.375.09-.135.015-.27.015-.405-.015-.135-.03-.255-.06-.36-.105-.105-.045-.195-.09-.27-.15-.075-.06-.135-.12-.18-.195-.045-.075-.075-.15-.09-.24-.015-.09-.015-.18-.015-.285s.015-.195.03-.285c.015-.09.045-.18.09-.255.045-.075.105-.15.18-.21.075-.06.165-.12.27-.165.105-.045.225-.075.36-.09.135-.015.27-.015.405.015.135.03.255.06.36.105.105.045.195.09.27.15.075.06.135.12.18.195.045.075.075.15.09.24z"/></svg>
+    </button>
+
+    <!-- Modals (Product, Cart, Checkout, Favorites) -->
     <!-- Product Modal -->
     <div id="product-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
         <div id="product-modal-content" class="glass-effect rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-scale-in">
@@ -249,7 +198,7 @@
     </div>
 
     <!-- Toast Notification -->
-    <div id="toast" class="hidden fixed bottom-4 right-4 glass-effect text-text-primary px-6 py-4 rounded-lg shadow-lg z-50">
+    <div id="toast" class="hidden fixed bottom-24 right-4 glass-effect text-text-primary px-6 py-4 rounded-lg shadow-lg z-50">
         <!-- Toast message is loaded by JS -->
     </div>
 
