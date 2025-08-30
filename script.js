@@ -413,26 +413,48 @@ class FloralCatalogApp {
             return;
         }
         const modal = document.getElementById('checkout-modal');
+        if (!modal) return;
+
+        // Garante que o HTML do formulário seja criado
         if (!modal.innerHTML.trim()) {
             modal.innerHTML = `
-            <div class="bg-surface rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scale-in">
+            <div class="bg-surface rounded-2xl max-w-lg w-full max-h-[90vh] overflow-y-auto animate-scale-in">
                 <div class="p-8">
-                    <div class="flex justify-between items-center">
-                        <h3 class="text-2xl font-display font-bold gradient-text mb-6">Finalizar Pedido</h3>
+                    <div class="flex justify-between items-center mb-6">
+                        <h3 class="text-2xl font-display font-bold gradient-text">Finalizar Pedido</h3>
                         <button class="close-modal text-text-secondary hover:text-primary text-3xl">&times;</button>
                     </div>
                     <form id="checkout-form" class="space-y-6">
-                        <div><label class="block text-text-secondary mb-2">Nome *</label><input type="text" name="customer_name" required class="w-full bg-background text-text-primary px-4 py-3 rounded-lg border border-primary/30 focus:border-primary focus:outline-none"></div>
-                        <div><label class="block text-text-secondary mb-2">WhatsApp *</label><input type="tel" name="customer_phone" required class="w-full bg-background text-text-primary px-4 py-3 rounded-lg border border-primary/30 focus:border-primary focus:outline-none"></div>
+                        <div>
+                            <label for="customer_name" class="block text-sm font-medium text-text-secondary mb-2">Seu Nome Completo *</label>
+                            <input type="text" id="customer_name" name="customer_name" required class="w-full bg-background text-text-primary px-4 py-3 rounded-lg border border-primary/30 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50">
+                        </div>
+                        <div>
+                            <label for="customer_phone" class="block text-sm font-medium text-text-secondary mb-2">Seu WhatsApp (com DDD) *</label>
+                            <input type="tel" id="customer_phone" name="customer_phone" required placeholder="(XX) XXXXX-XXXX" class="w-full bg-background text-text-primary px-4 py-3 rounded-lg border border-primary/30 focus:border-primary focus:outline-none focus:ring-1 focus:ring-primary/50">
+                        </div>
                         <div class="border-t border-primary/20 pt-6">
-                            <div class="flex justify-between items-center mb-6"><span class="text-xl font-semibold text-primary">Total:</span><span id="checkout-total" class="text-2xl font-bold gradient-text">R$ 0,00</span></div>
+                            <div class="flex justify-between items-center mb-6">
+                                <span class="text-xl font-semibold text-primary">Total:</span>
+                                <span id="checkout-total" class="text-2xl font-bold gradient-text">R$ 0,00</span>
+                            </div>
                             <button type="submit" class="btn-primary w-full py-4 font-bold rounded-2xl text-lg">Enviar Pedido via WhatsApp</button>
                         </div>
                     </form>
                 </div>
             </div>`;
+            
+            // Adiciona o event listener ao formulário recém-criado
+            modal.querySelector('#checkout-form').addEventListener('submit', (e) => {
+                e.preventDefault();
+                this.processCheckout();
+            });
         }
-        document.getElementById('checkout-total').textContent = `R$ ${this.getCartTotal().toFixed(2)}`;
+        
+        // Atualiza o total e exibe o modal
+        const totalEl = modal.querySelector('#checkout-total');
+        if(totalEl) totalEl.textContent = `R$ ${this.getCartTotal().toFixed(2)}`;
+        
         this.closeAllModals();
         modal.classList.remove('hidden');
     }

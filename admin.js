@@ -1,23 +1,20 @@
 // Admin Panel JavaScript
 class AdminPanel {
     constructor() {
-        this.isLoggedIn = false;
-        this.currentTab = 'dashboard';
+        this.token = localStorage.getItem('flore_token');
         this.products = [];
-        this.orders = [];
         this.categories = [];
+        this.orders = [];
         this.settings = {};
-        
-        this.init();
+        this.currentProduct = null;
+        this.currentCategory = null;
     }
 
-    // Get API URL based on environment
     getApiUrl() {
         if (window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1') {
             return 'http://localhost:5000';
-        } else {
-            return 'https://flore-backend.onrender.com';
         }
+        return 'https://flore-backend.onrender.com';
     }
 
     init() {
@@ -26,187 +23,87 @@ class AdminPanel {
     }
 
     setupEventListeners() {
-        // Login form
-        document.getElementById('login-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.handleLogin();
-        });
-
-        // Logout button
-        document.getElementById('logout-btn').addEventListener('click', () => {
-            this.logout();
-        });
-
-        // Tab navigation
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.addEventListener('click', (e) => {
-                this.switchTab(e.target.dataset.tab);
+        document.getElementById('login-form')?.addEventListener('submit', (e) => { e.preventDefault(); this.handleLogin(); });
+        document.getElementById('logout-btn')?.addEventListener('click', () => this.logout());
+        document.querySelectorAll('.tab-link').forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                this.switchTab(e.target.closest('.tab-link').dataset.tab);
             });
         });
-
-        // Modal close buttons
-        document.querySelectorAll('.close-modal').forEach(btn => {
-            btn.addEventListener('click', () => {
-                this.closeModals();
-            });
-        });
-
-        // Product management
-        document.getElementById('add-product-btn').addEventListener('click', () => {
-            this.openProductModal();
-        });
-
-        document.getElementById('product-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.saveProduct();
-        });
-
-        // Category management
-        document.getElementById('add-category-btn').addEventListener('click', () => {
-            this.openCategoryModal();
-        });
-
-        document.getElementById('category-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.saveCategory();
-        });
-
-        // Settings form
-        document.getElementById('settings-form').addEventListener('submit', (e) => {
-            e.preventDefault();
-            this.saveSettings();
-        });
-
-        // Order status filter
-        document.getElementById('order-status-filter').addEventListener('change', (e) => {
-            this.filterOrders(e.target.value);
-        });
+        document.getElementById('add-product-btn')?.addEventListener('click', () => this.openProductModal());
+        document.getElementById('add-category-btn')?.addEventListener('click', () => this.openCategoryModal());
+        document.getElementById('product-form')?.addEventListener('submit', (e) => { e.preventDefault(); this.saveProduct(); });
+        document.getElementById('category-form')?.addEventListener('submit', (e) => { e.preventDefault(); this.saveCategory(); });
+        document.getElementById('settings-form')?.addEventListener('submit', (e) => { e.preventDefault(); this.saveSettings(); });
+        document.querySelectorAll('.close-modal').forEach(btn => btn.addEventListener('click', () => this.closeAllModals()));
     }
 
     checkAuth() {
-        const token = localStorage.getItem('admin_token');
-        if (token) {
-            this.isLoggedIn = true;
+        if (this.token) {
             this.showAdminPanel();
+        } else {
+            document.getElementById('login-section').classList.remove('hidden');
+            document.getElementById('admin-panel').classList.add('hidden');
         }
     }
 
     async handleLogin() {
-        const password = document.getElementById('admin-password').value;
-        const errorDiv = document.getElementById('login-error');
-
+        const password = document.getElementById('password').value;
         try {
-            const apiUrl = this.getApiUrl();
-            const response = await fetch(`${apiUrl}/api/admin/login`, {
+            const response = await fetch(`${this.getApiUrl()}/api/admin/login`, {
                 method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json'
-                },
+                headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ password })
             });
-
+            if (!response.ok) throw new Error('Senha incorreta');
             const data = await response.json();
-
-            if (response.ok) {
-                localStorage.setItem('admin_token', data.token);
-                this.isLoggedIn = true;
-                this.showAdminPanel();
-                errorDiv.classList.add('hidden');
-            } else {
-                errorDiv.textContent = data.error || 'Senha incorreta';
-                errorDiv.classList.remove('hidden');
-            }
+            this.token = data.token;
+            localStorage.setItem('flore_token', this.token);
+            this.showAdminPanel();
         } catch (error) {
-            errorDiv.textContent = 'Erro ao fazer login. O backend está no ar?';
-            errorDiv.classList.remove('hidden');
+            this.showToast(error.message, 'error');
         }
     }
 
     logout() {
-        localStorage.removeItem('admin_token');
-        this.isLoggedIn = false;
-        document.getElementById('login-modal').classList.remove('hidden');
-        document.getElementById('admin-panel').classList.add('hidden');
+        this.token = null;
+        localStorage.removeItem('flore_token');
+        this.checkAuth();
     }
 
     showAdminPanel() {
-        document.getElementById('login-modal').classList.add('hidden');
+        document.getElementById('login-section').classList.add('hidden');
         document.getElementById('admin-panel').classList.remove('hidden');
-        this.switchTab('dashboard'); // Carrega o dashboard ao logar
+        this.switchTab('dashboard');
     }
 
     switchTab(tabName) {
-        // Update tab buttons
-        document.querySelectorAll('.tab-btn').forEach(btn => {
-            btn.classList.remove('active', 'border-primary', 'text-primary');
-            btn.classList.add('border-transparent', 'text-text-secondary');
+        document.querySelectorAll('.tab-content').forEach(tab => tab.classList.add('hidden'));
+        document.getElementById(`${tabName}-tab`).classList.remove('hidden');
+        document.querySelectorAll('.tab-link').forEach(link => {
+            link.classList.toggle('bg-primary/20', link.dataset.tab === tabName);
+            link.classList.toggle('text-primary', link.dataset.tab === tabName);
         });
 
-        const activeBtn = document.querySelector(`[data-tab="${tabName}"]`);
-        if(activeBtn) {
-            activeBtn.classList.add('active', 'border-primary', 'text-primary');
-            activeBtn.classList.remove('border-transparent', 'text-text-secondary');
-        }
-
-        // Update tab content
-        document.querySelectorAll('.tab-content').forEach(content => {
-            content.classList.add('hidden');
-        });
-        
-        const activeTab = document.getElementById(`${tabName}-tab`);
-        if(activeTab) {
-            activeTab.classList.remove('hidden');
-        }
-
-        this.currentTab = tabName;
-
-        // Load tab-specific data
         switch (tabName) {
-            case 'dashboard':
-                this.loadDashboard();
-                break;
-            case 'products':
-                this.loadProducts();
-                break;
-            case 'orders':
-                this.loadOrders();
-                break;
-            case 'categories':
-                this.loadCategories();
-                break;
-            case 'settings':
-                this.loadSettings();
-                break;
+            case 'dashboard': this.loadDashboard(); break;
+            case 'products': this.loadProducts(); break;
+            case 'categories': this.loadCategories(); break;
+            case 'orders': this.loadOrders(); break;
+            case 'settings': this.loadSettings(); break;
         }
     }
 
     async loadDashboard() {
-        try {
-            const response = await fetch(`${this.getApiUrl()}/api/analytics/dashboard`, {
-                headers: { 'Authorization': `Bearer ${localStorage.getItem('admin_token')}` }
-            });
-            const data = await response.json();
-
-            if (response.ok) {
-                document.getElementById('total-products').textContent = data.stats.total_products;
-                document.getElementById('total-orders').textContent = data.stats.total_orders;
-                document.getElementById('total-revenue').textContent = `R$ ${data.stats.total_revenue.toFixed(2)}`;
-                
-                const today = new Date().toDateString();
-                const ordersToday = data.recent_orders.filter(order => 
-                    new Date(order.created_at).toDateString() === today
-                ).length;
-                document.getElementById('orders-today').textContent = ordersToday;
-
-                this.loadOrdersChart(data.orders_by_status);
-                this.loadPopularProducts(data.popular_products);
-                this.loadRecentOrdersTable(data.recent_orders);
-            } else {
-                 this.handleAuthError(data);
-            }
-        } catch (error) {
-            console.error('Error loading dashboard:', error);
-        }
+        const data = await this.loadData('api/admin/analytics/dashboard');
+        if (!data) return;
+        document.getElementById('total-revenue').textContent = `R$ ${data.totalRevenue.toFixed(2)}`;
+        document.getElementById('total-orders').textContent = data.totalOrders;
+        document.getElementById('total-products').textContent = data.totalProducts;
+        this.loadOrdersChart(data.ordersByStatus);
+        this.loadPopularProducts(data.popularProducts);
+        this.loadRecentOrdersTable(data.recentOrders);
     }
 
     loadOrdersChart(ordersByStatus) {
