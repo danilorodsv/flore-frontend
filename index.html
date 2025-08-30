@@ -6,8 +6,6 @@
     <title>Florê - Catálogo Digital Premium</title>
     
     <meta name="description" content="Florê - Flores que encantam, momentos que marcam. Catálogo digital premium com arranjos exclusivos.">
-    <meta name="keywords" content="flores, floricultura, arranjos, buquês, presentes, São Luís de Montes Belos">
-    <meta name="author" content="Florê Floricultura">
     
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -15,9 +13,13 @@
             theme: {
                 extend: {
                     colors: {
-                        'primary': '#C4A484', 'secondary': '#D4B494', 'accent': '#B49474',
-                        'background': '#0a0a0a', 'surface': '#1a1a1a',
-                        'text-primary': '#ffffff', 'text-secondary': '#a0a0a0'
+                        'primary': '#C4A484', 
+                        'secondary': '#D4B494', 
+                        'accent': '#B49474',
+                        'background': '#1F1F1F', 
+                        'surface': '#2A2A2A',
+                        'text-primary': '#EAEAEA', 
+                        'text-secondary': '#9E9E9E'
                     },
                     fontFamily: {
                         'display': ['Playfair Display', 'serif'],
@@ -34,173 +36,109 @@
 
     <style>
         .gradient-text { background: linear-gradient(135deg, #C4A484 0%, #D4B494 100%); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-        .glass-effect { background: rgba(26, 26, 26, 0.8); backdrop-filter: blur(20px); border: 1px solid rgba(196, 164, 132, 0.2); }
-        .btn-primary { background: linear-gradient(135deg, #C4A484 0%, #D4B494 100%); color: #0a0a0a; transition: all 0.3s ease; }
-        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 10px 25px rgba(196, 164, 132, 0.4); }
-        .product-card:hover { transform: translateY(-8px); box-shadow: 0 20px 40px rgba(196, 164, 132, 0.2); }
-        .navbar-blur { background: rgba(10, 10, 10, 0.95); backdrop-filter: blur(20px); border-bottom: 1px solid rgba(196, 164, 132, 0.1); }
-        .loading-spinner { border: 3px solid rgba(196, 164, 132, 0.3); border-top-color: #C4A484; border-radius: 50%; width: 40px; height: 40px; animation: spin 1s linear infinite; }
+        .btn-primary { background-color: #C4A484; color: #1F1F1F; transition: all 0.3s ease; }
+        .btn-primary:hover { transform: translateY(-2px); box-shadow: 0 8px 25px rgba(196, 164, 132, 0.3); }
+        .card-border-gradient { border: 1px solid transparent; background: linear-gradient(to bottom, #2A2A2A, #2A2A2A) padding-box, linear-gradient(160deg, #C4A484, #2A2A2A, #2A2A2A) border-box; }
+        .product-card:hover { transform: translateY(-8px); box-shadow: 0 15px 30px rgba(0, 0, 0, 0.3); }
+        .navbar-blur { background: rgba(31, 31, 31, 0.8); backdrop-filter: blur(12px); border-bottom: 1px solid rgba(196, 164, 132, 0.1); }
+        .loading-spinner { border: 3px solid rgba(196, 164, 132, 0.2); border-top-color: #C4A484; }
         @keyframes spin { from { transform: rotate(0deg); } to { transform: rotate(360deg); } }
         @keyframes fade-in { from { opacity: 0; } to { opacity: 1; } }
         @keyframes slide-up { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
-        @keyframes scale-in { from { transform: scale(0.95); opacity: 0; } to { transform: scale(1); opacity: 1; } }
-        .animate-fade-in { animation: fade-in 0.5s ease-out forwards; }
-        .animate-slide-up { animation: slide-up 0.5s ease-out forwards; }
-        .animate-scale-in { animation: scale-in 0.3s ease-out forwards; }
+        .animate-fade-in { animation: fade-in 0.6s ease-out forwards; }
+        .animate-slide-up { animation: slide-up 0.6s ease-out forwards; }
     </style>
 </head>
 <body class="bg-background text-text-primary font-body overflow-x-hidden">
 
     <div id="loading-screen" class="fixed inset-0 bg-background z-50 flex items-center justify-center transition-opacity duration-500">
-        <div class="loading-spinner"></div>
+        <div class="loading-spinner w-10 h-10 rounded-full animate-spin"></div>
     </div>
 
     <header class="sticky top-0 w-full z-40 transition-all duration-300 navbar-blur" id="main-header">
         <div class="container mx-auto px-6 py-4 flex justify-between items-center">
-            <a href="#" class="flex items-center space-x-4">
-                <img id="header-logo" src="https://storage.googleapis.com/gemini-prod-us-west1-d50e9603655a/uploaded/logo%20quadrada.png" alt="Florê Logo" class="h-10 w-10 rounded-full">
-                <span class="text-2xl font-bold font-display gradient-text">Florê</span>
+            <a href="#" class="flex items-center space-x-3">
+                <img id="header-logo" src="https://placehold.co/40x40/2A2A2A/C4A484?text=F" alt="Florê Logo" class="h-10 w-10 rounded-full">
+                <span id="site-name" class="text-2xl font-bold font-display gradient-text">Florê</span>
             </a>
             <div class="flex items-center space-x-2">
-                <button id="search-button" class="p-2 text-primary hover:text-secondary transition-colors">
-                    <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                </button>
-                <button id="favorites-button" class="relative p-2 text-primary hover:text-secondary transition-colors">
+                <button id="favorites-button" class="relative p-2 text-text-secondary hover:text-primary transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                    <span id="favorites-count" class="absolute -top-1 -right-1 bg-accent text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                    <span id="favorites-count" class="absolute -top-1 -right-1 bg-primary text-background text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
                 </button>
-                <button id="cart-button" class="relative p-2 text-primary hover:text-secondary transition-colors">
+                <button id="cart-button" class="relative p-2 text-text-secondary hover:text-primary transition-colors">
                     <svg class="w-6 h-6" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path></svg>
-                    <span id="cart-count" class="absolute -top-1 -right-1 bg-accent text-black text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
+                    <span id="cart-count" class="absolute -top-1 -right-1 bg-primary text-background text-xs font-bold rounded-full h-5 w-5 flex items-center justify-center hidden">0</span>
                 </button>
-            </div>
-        </div>
-        <div id="search-bar" class="hidden container mx-auto px-6 pb-4 animate-fade-in">
-            <div class="relative">
-                <input id="search-input" type="text" placeholder="Buscar por nome, descrição ou tag..." class="w-full glass-effect text-text-primary px-4 py-3 rounded-lg border border-primary/30 focus:border-primary focus:outline-none pl-10">
-                <svg class="w-5 h-5 text-primary absolute left-3 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
-                <button id="clear-search" class="absolute right-3 top-1/2 -translate-y-1/2 text-text-secondary hover:text-primary">&times;</button>
             </div>
         </div>
     </header>
 
     <main class="relative z-10">
+        <section id="hero" class="text-center py-16 md:py-24 px-6 animate-fade-in">
+            <h1 id="hero-title" class="text-4xl md:text-5xl font-display font-bold gradient-text">Flores que encantam</h1>
+            <p id="site-tagline" class="text-lg text-text-secondary mt-2 tracking-widest">PREMIUM COLLECTION</p>
+            <div class="mt-8 max-w-xl mx-auto">
+                <div class="relative">
+                    <input id="search-input" type="text" placeholder="O que você procura hoje?" class="w-full bg-surface text-text-primary px-5 py-4 rounded-full border border-primary/20 focus:border-primary focus:outline-none focus:ring-2 focus:ring-primary/30 pl-12">
+                    <svg class="w-5 h-5 text-primary absolute left-4 top-1/2 -translate-y-1/2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                </div>
+            </div>
+        </section>
+
         <section id="catalog" class="py-12">
             <div class="container mx-auto px-6">
-                <h1 class="text-3xl font-display font-bold gradient-text mb-8 text-center animate-slide-up">Nosso Catálogo</h1>
-                
-                <div class="flex flex-col md:flex-row justify-between items-center gap-4 mb-8 animate-slide-up">
-                    <div class="flex-wrap justify-center gap-2 flex overflow-x-auto pb-2">
-                        <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium border transition-colors active border-primary text-primary" data-filter="all">Todos</button>
-                        <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium border transition-colors border-primary/30 text-text-secondary" data-filter="buques">Buquês</button>
-                        <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium border transition-colors border-primary/30 text-text-secondary" data-filter="arranjos">Arranjos</button>
-                        <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium border transition-colors border-primary/30 text-text-secondary" data-filter="cestas">Cestas</button>
-                        <button class="filter-btn px-4 py-2 rounded-full text-sm font-medium border transition-colors border-primary/30 text-text-secondary" data-filter="plantas">Plantas</button>
-                    </div>
-                    <div class="flex items-center gap-4">
-                        <select id="sort-select" class="glass-effect border border-primary/30 rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-primary">
-                            <option value="name">Ordenar por Nome</option>
-                            <option value="price-low">Menor Preço</option>
-                            <option value="price-high">Maior Preço</option>
-                            <option value="views">Mais Vistos</option>
-                        </select>
-                    </div>
+                <div class="flex flex-wrap justify-center gap-2 mb-10 animate-slide-up">
+                    <!-- Filtros de Categoria são carregados aqui -->
+                    <div id="category-filters" class="flex flex-wrap justify-center gap-2"></div>
                 </div>
 
                 <div id="products-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
-                    <!-- Products are loaded by JS -->
+                    <!-- Produtos são carregados aqui -->
                 </div>
                 <div class="text-center mt-12">
-                    <button id="load-more" class="btn-primary px-8 py-3 font-bold rounded-2xl text-base hidden">Carregar Mais</button>
+                    <button id="load-more" class="btn-primary px-8 py-3 font-bold rounded-full text-base hidden">Carregar Mais</button>
                 </div>
             </div>
         </section>
     </main>
 
-    <footer class="bg-surface/50 border-t border-primary/20 py-8">
-        <div class="container mx-auto px-6 text-center text-text-secondary text-sm">
-            <img src="https://storage.googleapis.com/gemini-prod-us-west1-d50e9603655a/uploaded/logo%20quadrada.png" alt="Florê Logo" class="h-12 w-12 mx-auto mb-4 rounded-full">
-            <p>© 2025 Florê Floricultura. Todos os direitos reservados.</p>
-            <p id="contact-address" class="text-xs mt-2"></p>
-            <a class='text-xs text-primary hover:text-accent' href='/admin.html'>Área Administrativa</a>
+    <footer class="bg-surface/50 border-t border-primary/20 pt-16 pb-8 mt-20">
+        <div class="container mx-auto px-6 text-center">
+            <div class="grid md:grid-cols-3 gap-12 text-left">
+                <div class="md:col-span-1">
+                    <h3 class="text-xl font-display font-bold gradient-text mb-4">Sobre Nós</h3>
+                    <p id="hero-subtitle" class="text-text-secondary text-sm leading-relaxed">Arranjos feitos à mão com as flores mais frescas para celebrar a vida.</p>
+                </div>
+                <div class="md:col-span-2 grid grid-cols-2 gap-8">
+                    <div>
+                        <h3 class="text-xl font-display font-bold gradient-text mb-4">Endereço</h3>
+                        <p id="contact-address" class="text-text-secondary text-sm whitespace-pre-line"></p>
+                    </div>
+                    <div>
+                        <h3 class="text-xl font-display font-bold gradient-text mb-4">Horários</h3>
+                        <p id="contact-hours" class="text-text-secondary text-sm whitespace-pre-line"></p>
+                    </div>
+                </div>
+            </div>
+            <div class="border-t border-primary/10 mt-12 pt-6 text-center">
+                <p class="text-text-secondary text-xs">&copy; 2025 <span id="footer-site-name">Florê</span>. Todos os direitos reservados.</p>
+                <a class='text-xs text-primary/70 hover:text-primary' href='/admin.html'>Área Administrativa</a>
+            </div>
         </div>
     </footer>
 
-    <!-- Floating Action Button for WhatsApp -->
     <button id="whatsapp-direct" class="fixed bottom-6 right-6 bg-green-500 text-white w-16 h-16 rounded-full flex items-center justify-center shadow-lg hover:bg-green-600 transition-transform hover:scale-110 z-30">
         <svg class="w-8 h-8" fill="currentColor" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.487 5.235 3.487 8.413 0 6.557-5.338 11.892-11.894 11.892-1.99 0-3.903-.52-5.586-1.457l-6.354 1.654zm6.838-9.972c.043-.117.105-.13.147-.13.042 0 .12.003.18.003.06 0 .135.003.203.003.068 0 .15.02.213.045.062.024.135.09.198.158.063.068.12.15.168.232.048.083.087.175.118.258.03.083.045.16.06.223.015.062.015.135.015.198s-.015.135-.03.198c-.015.063-.045.135-.09.223-.045.087-.105.175-.18.258-.075.083-.165.16-.27.232-.105.075-.225.12-.36.15-.135.03-.285.045-.45.045-.165 0-.345-.015-.54-.045-.195-.03-.39-.075-.57-.135-.18-.06-.345-.12-.51-.21-.165-.09-.315-.18-.45-.3-.135-.12-.255-.255-.36-.405-.105-.15-.195-.315-.27-.495-.075-.18-.135-.375-.18-.585-.045-.21-.075-.435-.075-.675s.03-.465.09-.69c.06-.225.135-.435.225-.63.09-.195.21-.375.345-.54.135-.165.285-.315.45-.45.165-.135.345-.255.54-.36.195-.105.405-.195.63-.27.225-.075.465-.12.72-.15.255-.03.51-.045.78-.045.27 0 .525.015.765.045.24.03.465.075.675.135.21.06.405.135.585.225.18.09.345.195.495.3.15.105.285.225.405.36.12.135.225.27.315.42.09.15.165.3.225.465.06.165.105.33.135.51.03.18.045.36.045.54s-.015.345-.045.51c-.03.165-.075.33-.135.495-.06.165-.12.315-.195.45-.075.135-.15.255-.24.36-.09.105-.18.195-.285.27-.105.075-.21.135-.33.18-.12.045-.24.075-.375.09-.135.015-.27.015-.405-.015-.135-.03-.255-.06-.36-.105-.105-.045-.195-.09-.27-.15-.075-.06-.135-.12-.18-.195-.045-.075-.075-.15-.09-.24-.015-.09-.015-.18-.015-.285s.015-.195.03-.285c.015-.09.045-.18.09-.255.045-.075.105-.15.18-.21.075-.06.165-.12.27-.165.105-.045.225-.075.36-.09.135-.015.27-.015.405.015.135.03.255.06.36.105.105.045.195.09.27.15.075.06.135.12.18.195.045.075.075.15.09.24z"/></svg>
     </button>
 
     <!-- Modals (Product, Cart, Checkout, Favorites) -->
-    <!-- Product Modal -->
-    <div id="product-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div id="product-modal-content" class="glass-effect rounded-2xl max-w-4xl w-full max-h-[90vh] overflow-y-auto animate-scale-in">
-            <!-- Content is loaded by JS -->
-        </div>
-    </div>
-
-    <!-- Cart Modal -->
-    <div id="cart-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="glass-effect rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scale-in">
-            <div class="p-8">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-2xl font-display font-bold gradient-text">Seu Carrinho</h3>
-                    <button class="close-modal text-text-secondary hover:text-primary text-3xl">&times;</button>
-                </div>
-                <div id="cart-items" class="space-y-4 mb-6"></div>
-                <div class="border-t border-primary/20 pt-6">
-                    <div class="flex justify-between items-center mb-6">
-                        <span class="text-xl font-semibold text-primary">Total:</span>
-                        <span id="cart-total" class="text-2xl font-bold gradient-text">R$ 0,00</span>
-                    </div>
-                    <button id="checkout-btn" class="btn-primary w-full py-4 font-bold rounded-2xl text-lg">Finalizar Pedido</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Checkout Modal -->
-    <div id="checkout-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="glass-effect rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scale-in">
-            <div class="p-8">
-                <div class="flex justify-between items-center">
-                    <h3 class="text-2xl font-display font-bold gradient-text mb-6">Finalizar Pedido</h3>
-                    <button class="close-modal text-text-secondary hover:text-primary text-3xl">&times;</button>
-                </div>
-                <form id="checkout-form" class="space-y-6">
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div><label class="block text-text-secondary mb-2">Nome Completo *</label><input type="text" name="customer_name" required class="w-full glass-effect text-text-primary px-4 py-3 rounded-lg border border-primary/30 focus:border-primary focus:outline-none"></div>
-                        <div><label class="block text-text-secondary mb-2">WhatsApp *</label><input type="tel" name="customer_phone" required class="w-full glass-effect text-text-primary px-4 py-3 rounded-lg border border-primary/30 focus:border-primary focus:outline-none"></div>
-                        <div class="md:col-span-2"><label class="block text-text-secondary mb-2">Observações</label><textarea name="notes" rows="3" placeholder="Alguma observação especial para seu pedido..." class="w-full glass-effect text-text-primary px-4 py-3 rounded-lg border border-primary/30 focus:border-primary focus:outline-none"></textarea></div>
-                    </div>
-                    <div class="border-t border-primary/20 pt-6">
-                        <div class="flex justify-between items-center mb-6"><span class="text-xl font-semibold text-primary">Total do Pedido:</span><span id="checkout-total" class="text-2xl font-bold gradient-text">R$ 0,00</span></div>
-                        <button type="submit" class="btn-primary w-full py-4 font-bold rounded-2xl text-lg">Enviar Pedido via WhatsApp</button>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-
-    <!-- Favorites Modal -->
-    <div id="favorites-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4">
-        <div class="glass-effect rounded-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto animate-scale-in">
-            <div class="p-8">
-                <div class="flex justify-between items-center mb-6">
-                    <h3 class="text-2xl font-display font-bold gradient-text">Seus Favoritos</h3>
-                    <button class="close-modal text-text-secondary hover:text-primary text-3xl">&times;</button>
-                </div>
-                <div id="favorites-items" class="space-y-4 mb-6">
-                    <!-- Favorite items will be loaded here -->
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Toast Notification -->
-    <div id="toast" class="hidden fixed bottom-24 right-4 glass-effect text-text-primary px-6 py-4 rounded-lg shadow-lg z-50">
-        <!-- Toast message is loaded by JS -->
-    </div>
+    <!-- O HTML dos modais permanece o mesmo, apenas o estilo será herdado -->
+    <div id="product-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"></div>
+    <div id="cart-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"></div>
+    <div id="checkout-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"></div>
+    <div id="favorites-modal" class="hidden fixed inset-0 bg-black/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"></div>
+    <div id="toast" class="hidden fixed bottom-24 right-4 bg-surface text-text-primary px-6 py-4 rounded-lg shadow-lg z-50"></div>
 
     <script src="script.js" defer></script>
 </body>

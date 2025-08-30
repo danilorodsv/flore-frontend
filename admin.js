@@ -327,6 +327,7 @@ class AdminPanel {
     async loadSettings() {
         this.settings = await this.loadData('api/settings') || {};
         this.populateSettingsForm();
+        this.applyThemeColors(); // <-- ADICIONADO: Aplica as cores ao carregar
     }
 
     renderProductsTable() {
@@ -461,12 +462,29 @@ class AdminPanel {
         const inputs = form.querySelectorAll('input, textarea');
 
         inputs.forEach(input => {
-            const value = this.settings[input.name];
+            // Usa o nome do input para encontrar a chave correspondente nas configurações
+            const settingKey = input.name; 
+            const value = this.settings[settingKey];
             if (value !== undefined) {
                 input.value = value;
             }
         });
     }
+
+    // --- INÍCIO DA NOVA FUNÇÃO ---
+    /**
+     * Aplica as cores do tema (carregadas das configurações) aos elementos da UI.
+     */
+    applyThemeColors() {
+        const primaryColor = this.settings.primaryColor || '#C4A484'; // Cor padrão de fallback
+        const buttons = document.querySelectorAll('.btn-primary');
+        
+        buttons.forEach(btn => {
+            btn.style.backgroundColor = primaryColor;
+            // Você pode adicionar lógica de contraste de texto aqui se necessário
+        });
+    }
+    // --- FIM DA NOVA FUNÇÃO ---
 
     openProductModal(productId = null) {
         const modal = document.getElementById('product-modal');
@@ -607,6 +625,8 @@ class AdminPanel {
         const result = await this.saveData('api/settings', settings, 'POST');
         if (result) {
             this.showToast('Configurações salvas!', 'success');
+            this.settings = result.settings; // Atualiza as configurações locais
+            this.applyThemeColors(); // <-- ADICIONADO: Aplica as novas cores imediatamente
         }
     }
 
